@@ -14,6 +14,22 @@ class App extends Component{
 
 	componentDidMount() { 
 		this.initGame()
+
+		window.addEventListener("keyup", (e) => { 
+			
+			switch (e.keyCode) { 
+				case 39: this.pieceMoveToXAxis(1)
+					break
+				case 37: this.pieceMoveToXAxis(-1)
+					break
+				case 40: this.pieceMoveToYAxis(1)
+					break
+			}
+
+			//37 gauche
+			//39 right
+			//bas 40
+		})
 	}
 
 	initGame = () => {
@@ -48,9 +64,10 @@ class App extends Component{
 		piece.grid = pieceCollection[0]
 		piece.mergeData = []
 
-		let result = this.pieceCanBeMove(piece)
+		let coordinate = this.pieceCanBeMove(piece)
 
-		if (result) { 
+		if (coordinate !== false) { 
+			piece.mergeData = coordinate
 			this.setState({piece})	
 		}
 
@@ -58,20 +75,67 @@ class App extends Component{
 
 	pieceCanBeMove = (piece) => { 
 		
+		let coordinate = []
+
 		for (let y = 0; y < piece.grid.length; y++) {
 			for (let x = 0; x < piece.grid[0].length; x++) {
 				if (piece.grid[y][x] > 0) { 
+
+					if (this.state.grid[y + piece.posY] === undefined) { 
+						return false // out of range Y
+					}
+
+					if (this.state.grid[y + piece.posY][x + piece.posX] === undefined) { 
+						return false //out of range X
+					}
 
 					if (this.state.grid[y + piece.posY][x + piece.posX] > 0) { 
 						return false
 					}
 
-					piece.mergeData.push(y + "_" + x)
+					coordinate.push( (y + piece.posY) + "_" + (x + piece.posX) )
 				}
 			}
 		}
 
-		return true
+		return coordinate
+
+	}
+
+	pieceMoveToXAxis = (deltaX) => { 
+		
+		let piece = { ...this.state.piece }
+
+		if (piece === null) { 
+			return false
+		}
+
+		piece.posX += deltaX
+
+		let coordinate = this.pieceCanBeMove(piece)
+		if (coordinate !== false) { 
+			piece.mergeData = coordinate
+			this.setState({piece})
+		}
+
+	}
+
+
+	pieceMoveToYAxis = (deltaY) => { 
+		
+		let piece = { ...this.state.piece }
+
+		if (piece === null) { 
+			return false
+		}
+
+		piece.posY += deltaY
+
+		let coordinate = this.pieceCanBeMove(piece)
+		if (coordinate !== false) { 
+			piece.mergeData = coordinate
+			this.setState({piece})
+		}
 
 	}
 

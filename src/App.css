@@ -8,6 +8,10 @@
 	float: left;
 	border: 1px solid black;
 }
+#grid span.color{
+	background: black;
+	color: white;
+}
 #grid span.first{
 	clear: both;
 }
