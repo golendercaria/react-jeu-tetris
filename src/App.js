@@ -1,26 +1,51 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react'
+import './App.css'
+import Grid from './Grid'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component{
+
+	state = {
+		grid: null,
+		gridHeight: 10,
+		gridWidth:8
+	}
+
+	buildGrid = () => {
+
+		let grid = []
+
+		for (let y = 0; y < this.state.gridHeight; y++) {
+			let line = []
+			for (let x = 0; x < this.state.gridWidth; x++) {
+				line.push(0);
+			}
+			grid.push(line)
+		}
+
+		return grid
+
+	}
+
+	initGame = () => {
+		this.setState({grid:this.buildGrid()})
+	}
+
+	componentDidMount() { 
+		this.initGame()
+	}
+
+	render() { 
+		return (
+			<div id="wrapper_tetris">
+				<h1>Tetris</h1>
+				{
+					this.state.grid !== null &&
+						<Grid grid={this.state.grid} />
+				}
+			</div>
+		)
+	}
+
 }
 
 export default App;
