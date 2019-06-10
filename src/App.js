@@ -55,6 +55,20 @@ class App extends Component{
 
 	}
 
+	mergePieceToGrid = () => {
+
+		const virtualGrid = this.state.grid
+
+		this.state.piece.mergeData.forEach(element => {
+			const [y, x] = element.split("_")
+			virtualGrid[y][x] = 1
+		});
+
+		this.setState({ grid: virtualGrid, piece: null }, () => { 
+			this.generatePiece()
+		})
+	}
+
 	//PIECE FUNCTIONS
 	generatePiece = () => {
 
@@ -132,9 +146,11 @@ class App extends Component{
 		piece.posY += deltaY
 
 		let coordinate = this.pieceCanBeMove(piece)
-		if (coordinate !== false) { 
+		if (coordinate !== false) {
 			piece.mergeData = coordinate
-			this.setState({piece})
+			this.setState({ piece })
+		} else { 
+			this.mergePieceToGrid()
 		}
 
 	}

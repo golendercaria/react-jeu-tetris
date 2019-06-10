@@ -13,7 +13,9 @@ function Grid({ grid, piece }) {
 
 								return <span key={x + "_" + y} className={
 									((x === 0) ? "first" : '') + " " +
-									((piece !== null && piece.mergeData.indexOf(y + "_" + x) !== -1) ? 'color' : '')}>
+									((piece !== null && piece.mergeData.indexOf(y + "_" + x) !== -1) ? 'color' : '') + 
+									((grid[y][x] === 1) ? 'color' : '')
+									}>
 									{
 										(piece !== null) ? 
 											(
