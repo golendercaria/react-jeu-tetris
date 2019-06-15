@@ -85,14 +85,21 @@ class App extends Component{
 	generatePiece = () => {
 
 		let piece = {}
-		piece.posX = 0
 		piece.posY = 0
-		piece.grid = pieceCollection[0]
+
+		let indexPieceCollection = Math.floor( Math.random() * pieceCollection.length )
+		piece.color = indexPieceCollection + 1 // +1 because 0 is empty cell
+
+		piece.grid = pieceCollection[indexPieceCollection]
+		//if value of 0,0 coordinate equal 0 offset y to -1 for init spawn
+		if (piece.grid[0][0] === 0) { 
+			piece.posY--
+		}
+
+		piece.posX = Math.floor( (this.state.gridWidth - piece.grid[0].length) / 2 )
+		
 		piece.mergeData = []
-		piece.color = Math.floor( Math.random() * 5) + 1
-
 		let coordinate = this.pieceCanBeMove(piece)
-
 		if (coordinate !== false) { 
 			piece.mergeData = coordinate
 			this.setState({piece})	
