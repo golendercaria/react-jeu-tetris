@@ -7,11 +7,15 @@ class App extends Component{
 
 	state = {
 		grid: null,
-		gridHeight: 10,
+		gridHeight: 15,
 		gridWidth: 8,
 		piece: null,
-		nbrCleanLine:0
+		nbrCleanLine: 0,
+		lvl:1
 	}
+
+	// preview next piece
+
 
 	componentDidMount() { 
 		this.initGame()
@@ -38,12 +42,35 @@ class App extends Component{
 			//39 right
 			//bas 40
 		})
+
 	}
 
 	initGame = () => {
 		this.setState({ grid: this.buildGrid() }, () => {
 			this.generatePiece()
+
+			this.launchTimer()
 		})
+	}
+
+	closeGame = () => {
+		//mettre fin au jeu
+		clearInterval(this.timer)
+	}
+
+	//TIMER FONCTION
+	launchTimer = () => { 
+		this.timer = setInterval(() => {
+			this.pieceMoveToYAxis(1)
+		}, this.convertLvlToTime())
+	}
+
+	convertLvlToTime = () => { 
+		if (this.state.lvl === 1) {
+			return 1000
+		} else if (this.state.lvl === 2) {
+			return 300
+		}
 	}
 
 	//GRID FUNCTIONS
@@ -65,6 +92,8 @@ class App extends Component{
 
 	mergePieceToGrid = () => {
 
+		let lvl = this.state.lvl
+		let lvlChanged = false
 		const virtualGrid = this.state.grid
 		let nbrCleanLine = this.state.nbrCleanLine
 
@@ -75,9 +104,18 @@ class App extends Component{
 
 		let { cleanGrid, nbrLineCompleted } = this.cleanGrid(virtualGrid)
 		nbrCleanLine += nbrLineCompleted
+
+		if (nbrCleanLine > 1) { 
+			lvl = 2
+			clearInterval(this.timer)
+			lvlChanged = true
+		}
 		
-		this.setState({ grid: cleanGrid, piece: null, nbrCleanLine:nbrCleanLine }, () => { 
+		this.setState({ grid: cleanGrid, piece: null, nbrCleanLine:nbrCleanLine, lvl }, () => { 
 			this.generatePiece()
+			if (lvlChanged) { 
+				this.launchTimer()
+			}
 		})
 	}
 
@@ -100,9 +138,11 @@ class App extends Component{
 		
 		piece.mergeData = []
 		let coordinate = this.pieceCanBeMove(piece)
-		if (coordinate !== false) { 
+		if (coordinate !== false) {
 			piece.mergeData = coordinate
-			this.setState({piece})	
+			this.setState({ piece })
+		} else { 
+			this.closeGame()
 		}
 
 	}
@@ -210,16 +250,23 @@ class App extends Component{
 			piece.mergeData = coordinate
 			this.setState({ piece })
 		} else { 
+
+			let isPositionUpdate = false
+
 			//if x is out of range
 			if (piece.posX < 0) {
 				piece.posX = 0
-				coordinate = this.pieceCanBeMove(piece)
-				if (coordinate !== false) {
-					piece.mergeData = coordinate
-					this.setState({ piece })
-				}	
-			}else if (piece.grid[0].length + this.state.gridWidth > this.state.gridWidth) { 
+				isPositionUpdate = true
+			} else if (piece.grid[0].length + piece.posX  > this.state.gridWidth) {
 				piece.posX = this.state.gridWidth - piece.grid[0].length
+				isPositionUpdate = true
+			} else if (piece.posY < 0) {
+				console.log(piece.posY)
+				piece.posY = 0
+				isPositionUpdate = true
+			}
+
+			if (isPositionUpdate) { 
 				coordinate = this.pieceCanBeMove(piece)
 				if (coordinate !== false) {
 					piece.mergeData = coordinate
@@ -272,6 +319,7 @@ class App extends Component{
 			<div id="wrapper_tetris">
 				<h1>Tetris</h1>
 				<p className="score">{this.state.nbrCleanLine}</p>
+				<p className="lvl">Lvl {this.state.lvl}</p>
 				{
 					this.state.grid !== null &&
 						<Grid
