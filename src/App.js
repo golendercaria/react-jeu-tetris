@@ -17,6 +17,8 @@ class App extends Component{
 
 		window.addEventListener("keyup", (e) => { 
 			
+			//console.log(e.keyCode)
+
 			switch (e.keyCode) { 
 				case 39: this.pieceMoveToXAxis(1)
 					break
@@ -24,6 +26,11 @@ class App extends Component{
 					break
 				case 40: this.pieceMoveToYAxis(1)
 					break
+				case 88: this.rotatePiece("right")
+					break
+				case 89: this.rotatePiece("left")
+					break
+				default: break
 			}
 
 			//37 gauche
@@ -61,7 +68,7 @@ class App extends Component{
 
 		this.state.piece.mergeData.forEach(element => {
 			const [y, x] = element.split("_")
-			virtualGrid[y][x] = 1
+			virtualGrid[y][x] = this.state.piece.color
 		});
 
 		this.setState({ grid: virtualGrid, piece: null }, () => { 
@@ -77,6 +84,7 @@ class App extends Component{
 		piece.posY = 0
 		piece.grid = pieceCollection[0]
 		piece.mergeData = []
+		piece.color = Math.floor( Math.random() * 5) + 1
 
 		let coordinate = this.pieceCanBeMove(piece)
 
@@ -155,7 +163,59 @@ class App extends Component{
 
 	}
 
+	rotatePiece = (sense) => {
 
+		let piece = { ...this.state.piece }
+
+		if (piece === null) { 
+			return false
+		}
+
+		let newGrid = []
+
+		if (sense === "right") {
+			for (let x = 0; x < piece.grid[0].length; x++) {
+				let line = []
+				for (let y = piece.grid.length - 1; y > -1; y--) {
+					line.push(piece.grid[y][x]);
+				}
+				newGrid.push(line)
+			}
+		} else if ( sense === "left") { 
+			for (let x = piece.grid[0].length - 1; x > -1; x--) {
+				let line = []
+				for (let y = 0; y < piece.grid.length; y++) {
+					line.push( piece.grid[y][x] );
+				}
+				newGrid.push( line )
+			}
+		}
+
+		piece.grid = newGrid
+
+		let coordinate = this.pieceCanBeMove(piece)
+		if (coordinate !== false) {
+			piece.mergeData = coordinate
+			this.setState({ piece })
+		} else { 
+			//if x is out of range
+			if (piece.posX < 0) {
+				piece.posX = 0
+				coordinate = this.pieceCanBeMove(piece)
+				if (coordinate !== false) {
+					piece.mergeData = coordinate
+					this.setState({ piece })
+				}	
+			}else if (piece.grid[0].length + this.state.gridWidth > this.state.gridWidth) { 
+				piece.posX = this.state.gridWidth - piece.grid[0].length
+				coordinate = this.pieceCanBeMove(piece)
+				if (coordinate !== false) {
+					piece.mergeData = coordinate
+					this.setState({ piece })
+				}
+			}
+		}
+	}
 
 	render() { 
 		return (
