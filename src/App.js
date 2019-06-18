@@ -20,22 +20,35 @@ class App extends Component{
 	componentDidMount() { 
 		this.initGame()
 
-		window.addEventListener("keyup", (e) => { 
-			
-			//console.log(e.keyCode)
+		let key_pressed = []
+		let multiple_key_pressed = false
 
-			switch (e.keyCode) { 
-				case 39: this.pieceMoveToXAxis(1)
-					break
-				case 37: this.pieceMoveToXAxis(-1)
-					break
-				case 40: this.pieceMoveToYAxis(1)
-					break
-				case 88: this.rotatePiece("right")
-					break
-				case 89: this.rotatePiece("left")
-					break
-				default: break
+		window.addEventListener("keyup", (e) => {
+			multiple_key_pressed = false
+			let index = key_pressed.indexOf(e.keyCode)
+			if (index !== -1) { 
+				key_pressed.splice(index, 1)
+			}
+		})
+
+		window.addEventListener("keydown", (e) => { 
+		
+			if(key_pressed.indexOf(e.keyCode) === -1){
+				key_pressed.push(e.keyCode)
+			}
+
+			if (key_pressed.length > 1) {
+				key_pressed.forEach(
+					(keyCode, index) => {
+						if ( multiple_key_pressed === false && index === 0) {
+							multiple_key_pressed = true
+						} else { 
+							this.executeKeyCode(keyCode)
+						}
+					}
+				)
+			} else { 
+				this.executeKeyCode(key_pressed[0])
 			}
 
 			//37 gauche
@@ -43,6 +56,22 @@ class App extends Component{
 			//bas 40
 		})
 
+	}
+
+	executeKeyCode = (keyCode) => {
+		switch (keyCode) { 
+			case 39: this.pieceMoveToXAxis(1)
+				break
+			case 37: this.pieceMoveToXAxis(-1)
+				break
+			case 40: this.pieceMoveToYAxis(1)
+				break
+			case 88: this.rotatePiece("right")
+				break
+			case 89: this.rotatePiece("left")
+				break
+			default: break
+		}
 	}
 
 	initGame = () => {
@@ -69,7 +98,7 @@ class App extends Component{
 		if (this.state.lvl === 1) {
 			return 1000
 		} else if (this.state.lvl === 2) {
-			return 300
+			return 1000
 		}
 	}
 
