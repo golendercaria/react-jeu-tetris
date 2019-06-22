@@ -96,9 +96,9 @@ class App extends Component{
 
 	convertLvlToTime = () => { 
 		if (this.state.lvl === 1) {
-			return 1000
+			return 10000000
 		} else if (this.state.lvl === 2) {
-			return 1000
+			return 10000000
 		}
 	}
 
@@ -330,6 +330,8 @@ class App extends Component{
 		for (let i = 0; i < nbrLineCompleted; i++) { 
 			cleanGrid.unshift( this.makeCleanLine(this.state.gridWidth) )
 		}
+
+		console.log(cleanGrid)
 
 		return { cleanGrid, nbrLineCompleted}
 

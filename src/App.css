@@ -15,3 +15,15 @@
 #grid span.first{
 	clear: both;
 }
+
+.colorizedEmptyCellule-1{ background: red; }
+.colorizedEmptyCellule-2{ background: blue; }
+.colorizedEmptyCellule-3{ background: purple; }
+.colorizedEmptyCellule-4{ background: yellow; }
+.colorizedEmptyCellule-5{ background: orange; }
+.colorizedEmptyCellule-6{ background: pink; }
+.colorizedEmptyCellule-7{ background: green; }
+
+#grid span.projection:not(.color){
+	background: rgba(0,0,0,0.5);
+}
