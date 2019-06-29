@@ -7,11 +7,13 @@ function Grid({ grid, piece }) {
 
 	let projectionCoordinate = []
 	if (piece) { 
-		projectionCoordinate = getProjectionCoordinate(grid, piece, grid.length - 1)
+		projectionCoordinate = getProjectionCoordinate(grid, piece)
 	}
 
+	console.log(projectionCoordinate)
+
 	return (
-		<div id="grid">
+		<div id="grid" className="grid">
 			{
 				grid.map(
 				  	(line, y) => { 
@@ -74,8 +76,39 @@ function colorizedEmptyCellule(grid) {
 	return grid
 }
 
-function getProjectionCoordinate(grid, piece, virtualY) { 
+function getProjectionCoordinate(grid, piece) { 
 	
+	let previousCordinate = []
+	let coordinate = []
+
+	for (let virtualY = piece.posY; virtualY < grid.length; virtualY++) { 
+
+		previousCordinate = coordinate
+		coordinate = []
+
+		for (let y = 0; y < piece.grid.length; y++) {
+			for (let x = 0; x < piece.grid[0].length; x++) {
+				if (piece.grid[y][x] > 0) { 
+
+					if (grid[y + virtualY] === undefined) { 
+						return previousCordinate
+					}
+
+					if (grid[y + virtualY][x + piece.posX] > 0) { 
+						return previousCordinate
+					}
+
+					coordinate.push( (y + virtualY) + "_" + (x + piece.posX) )
+				}
+			}
+		}
+
+	}
+
+	return coordinate
+
+
+	/*
 	let coordinate = []
 
 	for (let y = 0; y < piece.grid.length; y++) {
@@ -103,40 +136,9 @@ function getProjectionCoordinate(grid, piece, virtualY) {
 		}
 	}
 
-	return coordinate
+	return coordinate*/
+
 }
-
-	
-	/*
-	pieceCanBeMove = (piece) => { 
-		
-		let coordinate = []
-
-		for (let y = 0; y < piece.grid.length; y++) {
-			for (let x = 0; x < piece.grid[0].length; x++) {
-				if (piece.grid[y][x] > 0) { 
-
-					if (this.state.grid[y + piece.posY] === undefined) { 
-						return false // out of range Y
-					}
-
-					if (this.state.grid[y + piece.posY][x + piece.posX] === undefined) { 
-						return false //out of range X
-					}
-
-					if (this.state.grid[y + piece.posY][x + piece.posX] > 0) { 
-						return false
-					}
-
-					coordinate.push( (y + piece.posY) + "_" + (x + piece.posX) )
-				}
-			}
-		}
-
-		return coordinate
-
-	}
-	*/
 
 
 export default Grid;

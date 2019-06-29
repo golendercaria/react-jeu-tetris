@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import './App.css'
 import Grid from './Grid'
 import pieceCollection from './pieceCollection'
+import NextPiece from './NextPiece'
 
 class App extends Component{
 
@@ -11,7 +12,8 @@ class App extends Component{
 		gridWidth: 8,
 		piece: null,
 		nbrCleanLine: 0,
-		lvl:1
+		lvl: 1,
+		nextPieceIndex:null
 	}
 
 	// preview next piece
@@ -75,7 +77,7 @@ class App extends Component{
 	}
 
 	initGame = () => {
-		this.setState({ grid: this.buildGrid() }, () => {
+		this.setState({ grid: this.buildGrid(), nextPieceIndex: this.generateNextPieceIndex()}, () => {
 			this.generatePiece()
 
 			this.launchTimer()
@@ -149,12 +151,18 @@ class App extends Component{
 	}
 
 	//PIECE FUNCTIONS
+	generateNextPieceIndex() { 
+		return Math.floor( Math.random() * pieceCollection.length )
+	}
+
+
+
 	generatePiece = () => {
 
 		let piece = {}
 		piece.posY = 0
 
-		let indexPieceCollection = Math.floor( Math.random() * pieceCollection.length )
+		let indexPieceCollection = this.state.nextPieceIndex
 		piece.color = indexPieceCollection + 1 // +1 because 0 is empty cell
 
 		piece.grid = pieceCollection[indexPieceCollection]
@@ -169,7 +177,7 @@ class App extends Component{
 		let coordinate = this.pieceCanBeMove(piece)
 		if (coordinate !== false) {
 			piece.mergeData = coordinate
-			this.setState({ piece })
+			this.setState({ piece, nextPieceIndex: this.generateNextPieceIndex() })
 		} else { 
 			this.closeGame()
 		}
@@ -351,6 +359,11 @@ class App extends Component{
 				<h1>Tetris</h1>
 				<p className="score">{this.state.nbrCleanLine}</p>
 				<p className="lvl">Lvl {this.state.lvl}</p>
+				<p>Next piece</p>
+				{
+					this.state.nextPieceIndex !== null &&
+					<NextPiece grid={pieceCollection[ this.state.nextPieceIndex]} />
+				}
 				{
 					this.state.grid !== null &&
 						<Grid
