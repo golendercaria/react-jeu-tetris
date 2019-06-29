@@ -10,8 +10,6 @@ function Grid({ grid, piece }) {
 		projectionCoordinate = getProjectionCoordinate(grid, piece)
 	}
 
-	console.log(projectionCoordinate)
-
 	return (
 		<div id="grid" className="grid">
 			{
