@@ -1,5 +1,4 @@
 import React from 'react'
-import './App.css'
 
 function Grid({ grid, piece }) {
 
@@ -26,8 +25,7 @@ function Grid({ grid, piece }) {
 								}
 								if (piece !== null) {
 									if (piece.mergeData.indexOf(y + "_" + x) !== -1) {
-										classes.push("color")
-										value = piece.color
+										classes.push("color-" + piece.color)
 									}
 								}
 
@@ -42,11 +40,10 @@ function Grid({ grid, piece }) {
 								}
 
 								if (grid[y][x] > 0) { 
-									classes.push("color")
-									value = grid[y][x]
+									classes.push("color-" + grid[y][x])
 								}
 
-								return <span key={x + "_" + y} className={classes.join(" ")}>{ value }</span>
+								return <span key={x + "_" + y} className={classes.join(" ")}></span>
 							}
 						)
 					}
