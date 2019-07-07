@@ -6,6 +6,8 @@ import NextPiece from './NextPiece'
 import LevelAndLine from './LevelAndLine'
 import TimeAndScore from './TimeAndScore'
 
+import touchAndHelper from "./touchAndHelper"
+
 class Game extends Component{
 
 	state = {
@@ -16,69 +18,82 @@ class Game extends Component{
 		nbrCleanLine: 0,
 		lvl: 1,
 		nextPieceIndex: null,
-		isLostGame:false
+		isLostGame: false,
+		options: {}
 	}
 
 	// preview next piece
 	componentDidMount() { 
+		let options = JSON.parse(localStorage.getItem("tetris_options"))
+		if (options === null || options === "") { 
+			options = touchAndHelper
+		}
+		this.setState({ options }, () => {
 
-		this.initGame()
+			//option ready launch game !
+			this.initGame()
 
-		let key_pressed = []
-		let multiple_key_pressed = false
-
-		window.addEventListener("keyup", (e) => {
-			multiple_key_pressed = false
-			let index = key_pressed.indexOf(e.keyCode)
-			if (index !== -1) { 
-				key_pressed.splice(index, 1)
-			}
 		})
+	}
 
-		window.addEventListener("keydown", (e) => { 
-		
-			if(key_pressed.indexOf(e.keyCode) === -1){
-				key_pressed.push(e.keyCode)
-			}
-
-			if (key_pressed.length > 1) {
-				key_pressed.forEach(
-					(keyCode, index) => {
-						if ( multiple_key_pressed === false && index === 0) {
-							multiple_key_pressed = true
-						} else { 
-							this.executeKeyCode(keyCode)
-						}
-					}
-				)
-			} else { 
-				this.executeKeyCode(key_pressed[0])
-			}
-
-			//37 gauche
-			//39 right
-			//bas 40
-		})
-
+	componentWillUnmount() {
+		window.removeEventListener("keyup", this.keyupActions)
+		window.removeEventListener("keydown", this.keydownActions)
 	}
 
 	executeKeyCode = (keyCode) => {
 		switch (keyCode) { 
-			case 39: this.pieceMoveToXAxis(1)
+			case this.state.options.touch["right"]: this.pieceMoveToXAxis(1)
 				break
-			case 37: this.pieceMoveToXAxis(-1)
+			case this.state.options.touch["left"]: this.pieceMoveToXAxis(-1)
 				break
-			case 40: this.pieceMoveToYAxis(1)
+			case this.state.options.touch["bottom"]: this.pieceMoveToYAxis(1)
 				break
-			case 88: this.rotatePiece("right")
+			case this.state.options.touch["rotateRight"]: this.rotatePiece("right")
 				break
-			case 89: this.rotatePiece("left")
+			case this.state.options.touch["rotateLeft"]: this.rotatePiece("left")
 				break
 			default: break
 		}
 	}
 
+	keyupActions = (e) => {
+		this.multiple_key_pressed = false
+		let index = this.key_pressed.indexOf(e.keyCode)
+		if (index !== -1) { 
+			this.key_pressed.splice(index, 1)
+		}
+	}
+
+	keydownActions = (e) => {
+		if(this.key_pressed.indexOf(e.keyCode) === -1){
+			this.key_pressed.push(e.keyCode)
+		}
+
+		if (this.key_pressed.length > 1) {
+			this.key_pressed.forEach(
+				(keyCode, index) => {
+					if ( this.multiple_key_pressed === false && index === 0) {
+						this.multiple_key_pressed = true
+					} else { 
+						this.executeKeyCode(keyCode)
+					}
+				}
+			)
+		} else { 
+			this.executeKeyCode(this.key_pressed[0])
+		}
+	}
+
 	initGame = () => {
+
+		this.key_pressed = []
+		this.multiple_key_pressed = false
+
+		//keyboard bind
+		window.addEventListener("keyup", this.keyupActions)
+		window.addEventListener("keydown", this.keydownActions)
+
 		this.setState({ grid: this.buildGrid(), nextPieceIndex: this.generateNextPieceIndex()}, () => {
 			this.generatePiece()
 
@@ -356,6 +371,10 @@ class Game extends Component{
 	render() { 
 		return (
 			<div id="wrapper_grid">	
+				
+				<button onClick={ () => this.props.actions.launchMenu() }>Back</button>
+			
+
 				<LevelAndLine lvl={this.state.lvl} line={this.state.nbrCleanLine} />
 				{
 					this.state.nextPieceIndex !== null &&
@@ -366,6 +385,7 @@ class Game extends Component{
 						<Grid
 							grid={this.state.grid}
 							piece={this.state.piece}
+							projection={this.state.options.helpers["projection"]}
 						/>
 				}
 				{

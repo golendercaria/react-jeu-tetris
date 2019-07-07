@@ -1,11 +1,11 @@
 import React from 'react'
 
-function Grid({ grid, piece }) {
+function Grid({ grid, piece, projection }) {
 
 	grid = colorizedEmptyCellule(grid)
 
 	let projectionCoordinate = []
-	if (piece) { 
+	if (piece && projection ) { 
 		projectionCoordinate = getProjectionCoordinate(grid, piece)
 	}
 
@@ -18,7 +18,6 @@ function Grid({ grid, piece }) {
 							(col, x) => { 
 
 								let classes = []
-								let value = 0
 
 								if (x === 0) { 
 									classes.push("first")
