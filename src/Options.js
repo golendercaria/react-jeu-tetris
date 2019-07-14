@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Modal from "./Modal"
 import touchAndHelper from "./touchAndHelper"
+import './Options.scss'
 
 class Options extends Component {
 
@@ -68,21 +69,30 @@ class Options extends Component {
 				<Modal active={this.state.modalActive}/>
 
 				<h1>Options</h1>
+				<p className="description">For change option, click on shape and press you favorite touch</p>
 				<h2>Liste des options</h2>
 				{
 					Object.keys(this.state.options.touch).map((t) => {
-						return <button onClick={ () => this.updateTouch(t) } key={"touch_"+t}>{t} ({this.state.options.touch[t]})</button>
+						return <button className={"option " + t} onClick={() => this.updateTouch(t)} key={"touch_" + t}>
+							<span className="shape"></span>
+							<span className="touch">{t} ({this.state.options.touch[t]})</span>
+						</button>
 					})
 				}
 				<h2>Liste des helpers</h2>
 				{
 					Object.keys(this.state.options.helpers).map((h) => {
-						return <button onClick={() => this.updateHelper(h)} key={"helper_" + h}>{h} ({
-							(this.state.options.helpers[h] === true) ? "ON" : "OFF"
-						})</button>
+						return <button className={"option " + h} onClick={() => this.updateHelper(h)} key={"helper_" + h}>
+							<span className="shape"></span>
+							<span className="shape2"></span>
+							<span className="touch">{h} ({
+								(this.state.options.helpers[h] === true) ? "ON" : "OFF"
+							})
+							</span>
+						</button>
 					})
 				}
-				<button onClick={ () => this.props.actions.launchMenu() }>Back</button>
+				<button className="back" onClick={ () => this.props.actions.launchMenu() }>Back</button>
 			</div>
 		)
 	}

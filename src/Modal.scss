@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css?family=Oswald:500&display=swap');
 
+$darkpurple : #18131d;
+$purple :#4f445a;
+$lightpurple : #7d7883;
+
 #modal{
 	position: fixed;
 	z-index: 99999;
@@ -22,7 +26,7 @@
 	}
 	.container{
 		position: relative;
-		background: #7d7883;
+		background: $purple;
 		top: 50%;
 		left: 50%;
 		transform: translateX(-50%) translateY(-50%);
@@ -31,7 +35,7 @@
 		min-height: 15vh;
 		.message{
 			padding: 5% 15% 5% 5%;
-			color: #4f445a;
+			color: $darkpurple;
 			font-size: 30px;
 			font-weight: bold;
 			font-family: 'Oswald', sans-serif;
@@ -42,7 +46,7 @@
 			position: absolute;
 			right: 5%;
 			top:5%;
-			color: #4f445a;
+			color: $darkpurple;
 			font-size: 30px;
 			&:hover{
 				color:#18131d;;
