@@ -2,10 +2,12 @@
   "name": "tetris",
   "version": "0.1.0",
   "private": true,
+  "homepage":"http://demo.nouslesdevs.com/react-jeu-tetris/",
   "dependencies": {
     "node-sass": "^4.12.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-ga": "^2.6.0",
     "react-scripts": "3.0.1"
   },
   "scripts": {

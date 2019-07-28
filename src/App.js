@@ -3,6 +3,7 @@ import './App.scss'
 import Menu from './Menu'
 import Game from './Game'
 import Options from './Options'
+import ReactGA from 'react-ga';
 
 class App extends Component{
 
@@ -12,7 +13,12 @@ class App extends Component{
 	}
 
 	componentDidMount() { 
+		
 		this.launchMenu()
+
+		ReactGA.initialize("UA-114649554-2");
+		ReactGA.pageview(window.location.pathname + window.location.search)
+		
 	}
 
 	launchGame = () => {
@@ -42,6 +48,8 @@ class App extends Component{
 			}
 		})
 	}
+	
+	
 
 	render() { 
 		return (
