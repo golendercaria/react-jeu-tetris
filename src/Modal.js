@@ -1,13 +1,13 @@
 import React from 'react'
 import "./Modal.scss"
 
-function Modal({ active }) {
+function Modal({ message, active }) {
 	return (
 		<div id="modal" className={(active === true) ? "open" : ""}>
 			<div className="mask"></div>
 			<div className="container auto">
 				<div className="message">
-					Push on touch on your keyboard !
+					{message}
 				</div>
 				<button className="close">&times;</button>
 			</div>

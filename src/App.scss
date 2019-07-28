@@ -29,12 +29,26 @@ body{
 	background: $darkpurple;
 	padding-bottom: 50px;
 }
+
+#wrapper_lost_game{
+	h2{
+		font-size: 80px;
+		color: $purple;
+		margin: 0;
+	}
+	.score{
+		margin: 20px 100px;
+		font-size: 50px;
+		color: white;
+		border: 2px dashed white;
+		padding: 20px 0;
+		
+	}
+}
+
 #wrapper_tetris{
 	text-align: center;
-	padding-top: 150px;
-}
-#menu{
-
+	padding-top: 120px;
 }
 h1{
 	color: $purple;

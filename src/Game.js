@@ -19,11 +19,14 @@ class Game extends Component{
 		lvl: 1,
 		nextPieceIndex: null,
 		isLostGame: false,
-		options: {}
+		options: {},
+		score: 0,
+		linePerLvl: 5
 	}
 
 	// preview next piece
 	componentDidMount() { 
+
 		let options = JSON.parse(localStorage.getItem("tetris_options"))
 		if (options === null || options === "") { 
 			options = touchAndHelper
@@ -87,6 +90,13 @@ class Game extends Component{
 
 	initGame = () => {
 
+		this.baseIntervalTimer = 1000
+		this.globalTimer = 0
+
+		setInterval(() => { 
+			this.globalTimer++
+		},1000)
+
 		this.key_pressed = []
 		this.multiple_key_pressed = false
 
@@ -94,7 +104,14 @@ class Game extends Component{
 		window.addEventListener("keyup", this.keyupActions)
 		window.addEventListener("keydown", this.keydownActions)
 
-		this.setState({ grid: this.buildGrid(), nextPieceIndex: this.generateNextPieceIndex()}, () => {
+		this.setState({
+			grid: this.buildGrid(),
+			nextPieceIndex: this.generateNextPieceIndex(),
+			nbrCleanLine: 0,
+			lvl: 1,
+			isLostGame: false,
+			score:0
+		}, () => {
 			this.generatePiece()
 
 			this.launchTimer()
@@ -105,22 +122,22 @@ class Game extends Component{
 		//mettre fin au jeu
 		clearInterval(this.timer)
 		//set status lost game
-		this.setState({isLostGame:true})
+		this.setState({ isLostGame: true })
+		//debind event
+		window.removeEventListener("keyup", this.keyupActions)
+		window.removeEventListener("keydown", this.keydownActions)
 	}
 
 	//TIMER FONCTION
-	launchTimer = () => { 
+	launchTimer = () => {
 		this.timer = setInterval(() => {
 			this.pieceMoveToYAxis(1)
 		}, this.convertLvlToTime())
 	}
 
-	convertLvlToTime = () => { 
-		if (this.state.lvl === 1) {
-			return 10000000
-		} else if (this.state.lvl === 2) {
-			return 10000000
-		}
+	convertLvlToTime = () => { 	
+		let interval = this.baseIntervalTimer - (this.state.lvl - 1) * 35
+		return (interval < 100) ? 100 : interval
 	}
 
 	//GRID FUNCTIONS
@@ -142,6 +159,7 @@ class Game extends Component{
 
 	mergePieceToGrid = () => {
 
+		let score = this.state.score
 		let lvl = this.state.lvl
 		let lvlChanged = false
 		const virtualGrid = this.state.grid
@@ -155,13 +173,23 @@ class Game extends Component{
 		let { cleanGrid, nbrLineCompleted } = this.cleanGrid(virtualGrid)
 		nbrCleanLine += nbrLineCompleted
 
-		if (nbrCleanLine > 1) { 
-			lvl = 2
-			clearInterval(this.timer)
-			lvlChanged = true
+
+		if (nbrLineCompleted > 0) { 
+			
+			//update score
+			score += parseInt(Math.pow(nbrLineCompleted, 2) * lvl * this.convertLvlToTime())
+			
+			//changement of lvl
+			if (nbrCleanLine >= this.state.linePerLvl) { 
+				nbrCleanLine = 0
+				lvl++
+				lvlChanged = true
+				clearInterval(this.timer)
+			}
+
 		}
 		
-		this.setState({ grid: cleanGrid, piece: null, nbrCleanLine:nbrCleanLine, lvl }, () => { 
+		this.setState({ grid: cleanGrid, piece: null, nbrCleanLine, lvl, score }, () => { 
 			this.generatePiece()
 			if (lvlChanged) { 
 				this.launchTimer()
@@ -315,7 +343,6 @@ class Game extends Component{
 				piece.posX = this.state.gridWidth - piece.grid[0].length
 				isPositionUpdate = true
 			} else if (piece.posY < 0) {
-				console.log(piece.posY)
 				piece.posY = 0
 				isPositionUpdate = true
 			}
@@ -369,13 +396,24 @@ class Game extends Component{
 	}
 
 	render() { 
+
+		if (this.state.isLostGame) { 
+			return (
+				<div id="wrapper_lost_game">
+					<h2>Game Over</h2>
+					<div className="score">Score : {this.state.score}</div>
+					<div id="menu">
+						<button onClick={() => this.props.actions.launchMenu()}>Back</button>
+						<button onClick={() => this.initGame()}>Play again</button>
+					</div>					
+
+				</div>
+			)
+		}
+
 		return (
 			<div id="wrapper_grid">	
-				
-				<button onClick={ () => this.props.actions.launchMenu() }>Back</button>
-			
-
-				<LevelAndLine lvl={this.state.lvl} line={this.state.nbrCleanLine} />
+				<LevelAndLine lvl={this.state.lvl} line={this.state.nbrCleanLine} linePerLvl={this.state.linePerLvl} />
 				{
 					this.state.nextPieceIndex !== null &&
 					<NextPiece grid={pieceCollection[this.state.nextPieceIndex]} color={this.state.nextPieceIndex + 1} />
@@ -388,11 +426,7 @@ class Game extends Component{
 							projection={this.state.options.helpers["projection"]}
 						/>
 				}
-				{
-					(this.state.isLostGame === true) &&
-						<button onClick={ () => this.props.actions.launchMenu() }>Retour</button>
-				}
-				<TimeAndScore />
+				<TimeAndScore score={this.state.score} globalTimer={this.globalTimer} />
 			</div>
 		)
 	}

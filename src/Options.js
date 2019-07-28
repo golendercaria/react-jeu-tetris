@@ -66,7 +66,7 @@ class Options extends Component {
 		return (
 			<div id="options">
 
-				<Modal active={this.state.modalActive}/>
+				<Modal active={this.state.modalActive} message={"Push on touch on your keyboard !"}/>
 
 				<h1>Options</h1>
 				<p className="description">For change option, click on shape and press you favorite touch</p>
