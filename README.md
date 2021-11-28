@@ -10,7 +10,10 @@ I've make some video when I develop the game : https://www.youtube.com/watch?v=I
 
 Demo : https://golendercaria.github.io/react-jeu-tetris/build/
 
-![alt text](https://golendercaria.github.io/react-jeu-tetris/build/screenshot.jpg)
-![alt text](https://golendercaria.github.io/react-jeu-tetris/build/screenshot2.jpg)
+Screenshot in game :
+![alt text](https://golendercaria.github.io/react-jeu-tetris/screenshot.jpg)
+
+Screenshot of option page :
+![alt text](https://golendercaria.github.io/react-jeu-tetris/screenshot2.jpg)
 
 Visite my website https://nouslesdevs.com and give me a power ;)
